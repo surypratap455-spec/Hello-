@@ -1,0 +1,67 @@
+from kivy.app import App
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.textinput import TextInput
+from kivy.uix.button import Button
+
+class Calculator(App):
+
+    def build(self):
+        self.expression = ""
+
+        layout = GridLayout(cols=1)
+
+        self.display = TextInput(
+            text="",
+            font_size=40,
+            readonly=True,
+            halign="right",
+            multiline=False,
+            background_color=(1,1,1,1),
+            foreground_color=(0,0,0,1)
+        )
+
+        layout.add_widget(self.display)
+
+        buttons = GridLayout(cols=4)
+
+        keys = [
+            "7","8","9","/",
+            "4","5","6","*",
+            "1","2","3","-",
+            "C","0","=","+"
+        ]
+
+        for key in keys:
+            btn = Button(
+                text=key,
+                font_size=30,
+                background_color=(0.15,0.45,0.95,1),
+                color=(1,1,1,1)
+            )
+            btn.bind(on_press=self.on_button_press)
+            buttons.add_widget(btn)
+
+        layout.add_widget(buttons)
+
+        return layout
+
+    def on_button_press(self, instance):
+        text = instance.text
+
+        if text == "C":
+            self.expression = ""
+            self.display.text = ""
+
+        elif text == "=":
+            try:
+                self.display.text = str(eval(self.expression))
+                self.expression = self.display.text
+            except:
+                self.display.text = "Error"
+                self.expression = ""
+
+        else:
+            self.expression += text
+            self.display.text = self.expression
+
+Calculator().run()
